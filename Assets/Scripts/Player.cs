@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Reference to bullet object through it's script.
+    public Bullet bulletPrefab;
     // Float value that the movement force is multiplied by to increase move speed.
     public float moveSpeed = 1.0f;
     // Float value that the turn direction is multiplied by to get the torque applied to the rigidbody.
@@ -27,6 +29,7 @@ public class Player : MonoBehaviour
     // Update needs to:
     // > Get Input
     // > Apply changes to boosting and turn direction using input
+    // > Shoot when pressing shoot button.
     void Update()
     {
         boosting = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
@@ -43,6 +46,11 @@ public class Player : MonoBehaviour
         {
             turnDirection = 0.0f;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Shoot();
+        }
     }
 
     // Fixed Update needs to:
@@ -58,5 +66,14 @@ public class Player : MonoBehaviour
         {
             playerRB.AddTorque(turnDirection * turnSpeed);
         }
+    }
+
+    // Shoot needs to:
+    // Instantiate bullet prefab at center of player with player's current rotation.
+    // "Project" the bullet (fire it with the current direction the player is facing).
+    void Shoot()
+    {
+        Bullet bullet = Instantiate(bulletPrefab, this.transform.position, this.transform.rotation);
+        bullet.Project(this.transform.up);
     }
 }
