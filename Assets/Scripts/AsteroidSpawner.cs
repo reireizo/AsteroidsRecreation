@@ -27,7 +27,8 @@ public class AsteroidSpawner : MonoBehaviour
     //   > Set a random spawn direction, and a spawn point based on that direction.
     //   > Set a random variance on rotation, and create a rotation Quaternion with it.
     //   > Instantiate an asteroid using the spawn point and rotation created
-    //   > Set the asteroid size.
+    //   > Set a random asteroid size with an asteroid's minSize and maxSize.
+    //   > Set the asteroid trajectory using the rotation and spawn direction.
     void Spawn()
     {
         for (int i = 0; i < spawnAmount; i++)

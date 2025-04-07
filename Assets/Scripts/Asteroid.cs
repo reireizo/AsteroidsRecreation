@@ -46,10 +46,46 @@ public class Asteroid : MonoBehaviour
         asteroidRB.mass = size;
     }
 
+    // SetTrajectory needs to:
+    // > Add a force to the asteroid rigid body, based on the passed in direction, and speed of the asteroid.
+    // > Set the object to destroy after enough time has passed, according to asteroidLifetime.
     public void SetTrajectory(Vector2 direction)
     {
         asteroidRB.AddForce(direction * asteroidSpeed);
         Destroy(this.gameObject, asteroidLifetime);
+    }
+
+    // OnCollisionEnter2D needs to:
+    // > Check if collision is a bullet.
+    //   > Destroy the object.
+    //   > Create 2 splits if size of current would create asteroids above or equal to minSize.
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            if((this.size * 0.5f) >= this.minSize)
+            {
+                CreateSplit();
+                CreateSplit();
+            }
+
+            Destroy (this.gameObject);
+        }
+    }
+
+    // CreateSplit needs to:
+    // > Get current position and add randomization within a half unit radius.
+    // > Instantiate a "half" asteroid with new position and current rotation.
+    // > Set size to half of current size.
+    // > Set trajectory via outer-edge of a 1 unit radius circle, multiplied by asteroid speed.
+    void CreateSplit()
+    {
+        Vector2 position = this.transform.position;
+        position += Random.insideUnitCircle * 0.5f;
+
+        Asteroid half = Instantiate(this, position, this.transform.rotation);
+        half.size = this.size * 0.5f;
+        half.SetTrajectory(Random.insideUnitCircle.normalized * asteroidSpeed);
     }
 
 }
