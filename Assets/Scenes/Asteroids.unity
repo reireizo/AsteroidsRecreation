@@ -296,6 +296,55 @@ MonoBehaviour:
   bulletPrefab: {fileID: -3288647007221231339, guid: 4ea0a37712616fa48912957639e2b08d, type: 3}
   moveSpeed: 1
   turnSpeed: 0.1
+--- !u!1 &360271828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 360271830}
+  - component: {fileID: 360271829}
+  m_Layer: 0
+  m_Name: Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &360271829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360271828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5544aca4b534f8c4dbe344a99335b5e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidPrefab: {fileID: -5947392229200777548, guid: d8d636274529aed449a04452a2bd3503, type: 3}
+  trajectoryVariance: 15
+  spawnRate: 2
+  spawnDistance: 15
+  spawnAmount: 1
+--- !u!4 &360271830
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360271828}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1332566101}
   - component: {fileID: 1332566102}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boundary E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,7 +559,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1377781868}
   - component: {fileID: 1377781869}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boundary N
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +636,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1452320956}
   - component: {fileID: 1452320957}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boundary S
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -664,7 +713,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1943421299}
   - component: {fileID: 1943421300}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Boundary W
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -738,3 +787,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 600111588}
   - {fileID: 344337577}
+  - {fileID: 360271830}

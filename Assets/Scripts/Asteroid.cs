@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Asteroid : MonoBehaviour
@@ -12,6 +13,10 @@ public class Asteroid : MonoBehaviour
     public float minSize = 0.5f;
     // Float value representing the maximum size an asteroid can randomly be set to.
     public float maxSize = 1.5f;
+    // Float value the asteroid trajectory force is multiplied by to increase move speed.
+    public float asteroidSpeed = 50.0f;
+    // Float value representing amount of time before asteroid deletes itself.
+    public float asteroidLifetime = 30.0f;
 
     // Reference to the asteroid's sprite renderer, to change out the sprite. Grabbed on Awake.
     SpriteRenderer asteroidSpriteRenderer;
@@ -29,9 +34,8 @@ public class Asteroid : MonoBehaviour
     // Start needs to:
     // > Set a random sprite from the array of sprites to the sprite renderer.
     // > Set a random rotation on the asteroid.
-    // > ***Set a random size for the asteroid.
+    // > Set asteroid size.
     // > Set the asteroid's mass in the rigidbody based on the new size.
-
     void Start()
     {
         asteroidSpriteRenderer.sprite = sprites[Random.Range(0, sprites.Length)];
@@ -40,6 +44,12 @@ public class Asteroid : MonoBehaviour
         transform.localScale = Vector3.one * size;
 
         asteroidRB.mass = size;
+    }
+
+    public void SetTrajectory(Vector2 direction)
+    {
+        asteroidRB.AddForce(direction * asteroidSpeed);
+        Destroy(this.gameObject, asteroidLifetime);
     }
 
 }

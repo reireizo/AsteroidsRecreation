@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1106792186135674868}
   - component: {fileID: 3272964255698956396}
   - component: {fileID: -5947392229200777548}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Asteroid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,3 +178,5 @@ MonoBehaviour:
   size: 1
   minSize: 0.5
   maxSize: 1.5
+  asteroidSpeed: 5
+  asteroidLifetime: 30
