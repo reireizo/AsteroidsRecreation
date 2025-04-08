@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreUI;
     public TextMeshProUGUI finalScoreUI;
     public TextMeshProUGUI hiScoreUI;
+    public GameObject GameOverUI;
     public Image[] livesUI;
     public int lives = 3;
     public int score = 0;
@@ -108,8 +109,11 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isGameOver = true;
-        // Show Game Over UI.
+        scoreUI.enabled = false;
+        GameOverUI.SetActive(true);
         SaveHiScore();
+        UpdateFinalScoreUI();
+        UpdateHiScoreUI();
     }
 
     void UpdateScoreUI()
@@ -119,6 +123,14 @@ public class GameManager : MonoBehaviour
     void UpdateLivesUI(int newLives)
     {
         livesUI[newLives].enabled = false;
+    }
+    void UpdateFinalScoreUI()
+    {
+        finalScoreUI.SetText("Final Score: " + score.ToString());
+    }
+    void UpdateHiScoreUI()
+    {
+        hiScoreUI.SetText("Hi-Score: " + hiScore.ToString());
     }
     void SaveHiScore()
     {
