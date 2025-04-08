@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -17,6 +18,9 @@ public class Asteroid : MonoBehaviour
     public float asteroidSpeed = 50.0f;
     // Float value representing amount of time before asteroid deletes itself.
     public float asteroidLifetime = 30.0f;
+
+    // An Action that is fired whenever an asteroid has been destroyed. Listened to by the Game Manager. Takes in the destroyed asteroid.
+    public static event Action<Asteroid> HasBeenDestoryed;
 
     // Reference to the asteroid's sprite renderer, to change out the sprite. Grabbed on Awake.
     SpriteRenderer asteroidSpriteRenderer;
@@ -38,9 +42,9 @@ public class Asteroid : MonoBehaviour
     // > Set the asteroid's mass in the rigidbody based on the new size.
     void Start()
     {
-        asteroidSpriteRenderer.sprite = sprites[Random.Range(0, sprites.Length)];
+        asteroidSpriteRenderer.sprite = sprites[UnityEngine.Random.Range(0, sprites.Length)];
 
-        transform.eulerAngles = new Vector3(0.0f, 0.0f, Random.value * 360.0f);
+        transform.eulerAngles = new Vector3(0.0f, 0.0f, UnityEngine.Random.value * 360.0f);
         transform.localScale = Vector3.one * size;
 
         asteroidRB.mass = size;
@@ -70,6 +74,7 @@ public class Asteroid : MonoBehaviour
             }
 
             Destroy (this.gameObject);
+            HasBeenDestoryed(this);
         }
     }
 
@@ -81,11 +86,11 @@ public class Asteroid : MonoBehaviour
     void CreateSplit()
     {
         Vector2 position = this.transform.position;
-        position += Random.insideUnitCircle * 0.5f;
+        position += UnityEngine.Random.insideUnitCircle * 0.5f;
 
         Asteroid half = Instantiate(this, position, this.transform.rotation);
         half.size = this.size * 0.5f;
-        half.SetTrajectory(Random.insideUnitCircle.normalized * asteroidSpeed);
+        half.SetTrajectory(UnityEngine.Random.insideUnitCircle.normalized * asteroidSpeed);
     }
 
 }

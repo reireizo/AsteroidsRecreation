@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,9 @@ public class Player : MonoBehaviour
     public float moveSpeed = 1.0f;
     // Float value that the turn direction is multiplied by to get the torque applied to the rigidbody.
     public float turnSpeed = 1.0f;
+
+    // An Action that is fired when the player has died. Listened to by the game manager.
+    public static event Action HasDied;
 
     // Bool for if you are boosting (moving forward by pressing W or Up Arrow)
     bool boosting;
@@ -75,5 +79,21 @@ public class Player : MonoBehaviour
     {
         Bullet bullet = Instantiate(bulletPrefab, this.transform.position, this.transform.rotation);
         bullet.Project(this.transform.up);
+    }
+
+    // OnCollisionEnter2D needs to:
+    // > Look if the collision was with an asteroid.
+    // > If so, stop player movement (velocity and angular velocity), deactivate the object, and fire the HasDied event.
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Asteroid")
+        {
+            playerRB.velocity = Vector3.zero;
+            playerRB.angularVelocity = 0.0f;
+
+            this.gameObject.SetActive(false);
+
+            HasDied();
+        }
     }
 }
