@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class AsteroidSpawner : MonoBehaviour
 {
@@ -15,11 +16,21 @@ public class AsteroidSpawner : MonoBehaviour
     // Int value representing how many asteroids get spawned at one time.
     public int spawnAmount = 1;
 
+    private ObjectPool<Asteroid> _asteroidPool;
+
     // Start needs to:
     // > Have Spawn function invoke repeatedly over time set in spawnRate.
     void Start()
     {
+        SimplePoolFactory<Asteroid> factory = new();
+        _asteroidPool = factory.CreatePool(asteroidPrefab, null, 30);
+
         InvokeRepeating(nameof(Spawn), spawnRate, spawnRate);
+    }
+
+    void OnDisable()
+    {
+        _asteroidPool?.Dispose();
     }
 
     // Spawn needs to:
@@ -39,7 +50,10 @@ public class AsteroidSpawner : MonoBehaviour
             float variance = Random.Range(-trajectoryVariance, trajectoryVariance);
             Quaternion rotation = Quaternion.AngleAxis(variance, Vector3.forward);
 
-            Asteroid asteroid = Instantiate(asteroidPrefab, spawnPoint, rotation);
+            Asteroid asteroid = _asteroidPool.Get();
+            asteroid.transform.position = spawnPoint;
+            asteroid.PoolParent = _asteroidPool;
+
             asteroid.size = Random.Range(asteroid.minSize, asteroid.maxSize);
             asteroid.SetTrajectory(rotation * -spawnDirection);
         }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Asteroid : MonoBehaviour
 {
@@ -27,12 +28,19 @@ public class Asteroid : MonoBehaviour
     // Reference to the asteroid's rigidbody, to change it's mass by it's size. Grabbed on Awake.
     Rigidbody2D asteroidRB;
 
+    public ObjectPool<Asteroid> PoolParent;
+
     // Awake needs to:
     // > Get sprite renderer and rigidbody for asteroid.
     void Awake()
     {
         asteroidSpriteRenderer = GetComponent<SpriteRenderer>();
         asteroidRB = GetComponent<Rigidbody2D>();
+    }
+
+    void OnEnable()
+    {
+        StartCoroutine(ReleaseAfterTime());
     }
 
     // Start needs to:
@@ -56,7 +64,6 @@ public class Asteroid : MonoBehaviour
     public void SetTrajectory(Vector2 direction)
     {
         asteroidRB.AddForce(direction * asteroidSpeed);
-        Destroy(this.gameObject, asteroidLifetime);
     }
 
     // OnCollisionEnter2D needs to:
@@ -73,7 +80,7 @@ public class Asteroid : MonoBehaviour
                 CreateSplit();
             }
 
-            Destroy (this.gameObject);
+            PoolParent.Release(this);
             HasBeenDestoryed(this);
         }
     }
@@ -88,9 +95,18 @@ public class Asteroid : MonoBehaviour
         Vector2 position = this.transform.position;
         position += UnityEngine.Random.insideUnitCircle * 0.5f;
 
-        Asteroid half = Instantiate(this, position, this.transform.rotation);
+        Asteroid half = PoolParent.Get();
+        half.transform.rotation = transform.rotation;
+        half.transform.position = position;
+        
         half.size = this.size * 0.5f;
         half.SetTrajectory(UnityEngine.Random.insideUnitCircle.normalized * asteroidSpeed);
+    }
+
+    private IEnumerator ReleaseAfterTime()
+    {
+        yield return new WaitForSeconds(asteroidLifetime);
+        PoolParent.Release(this);
     }
 
 }
