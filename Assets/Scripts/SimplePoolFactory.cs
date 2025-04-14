@@ -49,6 +49,14 @@ public class SimplePoolFactory<T> where T : MonoBehaviour
 
     private void GetFromPool(T pooledObject) => pooledObject.gameObject.SetActive(true);
     private void ReleaseToPool(T pooledObject) => pooledObject.gameObject.SetActive(false);
-    private void DestroyFromPool(T pooledObject) => GameObject.Destroy(pooledObject.gameObject);
+    private void DestroyFromPool(T pooledObject)
+    {
+        if (pooledObject == null)
+            return;
+        
+        GameObject obj = pooledObject.gameObject;
+        if (obj != null)
+            Object.Destroy(obj);
+    }
 
 }

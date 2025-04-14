@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Player : MonoBehaviour
 {
@@ -23,11 +24,19 @@ public class Player : MonoBehaviour
     // Reference to player rigidbody. Grabbed on Awake.
     Rigidbody2D playerRB;
 
+    private ObjectPool<Bullet> bulletPool;
+
     // Awake needs to:
     // > Get player Rigidbody component.
     void Awake()
     {
         playerRB = GetComponent<Rigidbody2D>();
+    }
+
+    void Start()
+    {
+        SimplePoolFactory<Bullet> factory = new();
+        bulletPool = factory.CreatePool(bulletPrefab, null, 10);
     }
 
     // Update needs to:
@@ -77,7 +86,11 @@ public class Player : MonoBehaviour
     // "Project" the bullet (fire it with the current direction the player is facing).
     void Shoot()
     {
-        Bullet bullet = Instantiate(bulletPrefab, this.transform.position, this.transform.rotation);
+        Bullet bullet = bulletPool.Get();
+        bullet.PoolParent = bulletPool;
+        bullet.transform.position = transform.position;
+        bullet.transform.rotation = transform.rotation;
+
         bullet.Project(this.transform.up);
     }
 
@@ -86,14 +99,11 @@ public class Player : MonoBehaviour
     // > If so, stop player movement (velocity and angular velocity), deactivate the object, and fire the HasDied event.
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Asteroid")
-        {
-            playerRB.velocity = Vector3.zero;
-            playerRB.angularVelocity = 0.0f;
+        playerRB.velocity = Vector3.zero;
+        playerRB.angularVelocity = 0.0f;
 
-            this.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
 
-            HasDied();
-        }
+        HasDied();
     }
 }

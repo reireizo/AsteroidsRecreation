@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class Asteroid : MonoBehaviour
+public class Asteroid : MonoBehaviour, IShootable
 {
     // Array of sprites that the asteroid can potentially use.
     public Sprite[] sprites;
@@ -70,19 +70,17 @@ public class Asteroid : MonoBehaviour
     // > Check if collision is a bullet.
     //   > Destroy the object.
     //   > Create 2 splits if size of current would create asteroids above or equal to minSize.
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Bullet")
-        {
-            if((this.size * 0.5f) >= this.minSize)
-            {
-                CreateSplit();
-                CreateSplit();
-            }
 
-            PoolParent.Release(this);
-            HasBeenDestoryed(this);
+    public void OnShot()
+    {
+        if((this.size * 0.5f) >= this.minSize)
+        {
+            CreateSplit();
+            CreateSplit();
         }
+
+        PoolParent.Release(this);
+        HasBeenDestoryed(this);
     }
 
     // CreateSplit needs to:
@@ -96,9 +94,9 @@ public class Asteroid : MonoBehaviour
         position += UnityEngine.Random.insideUnitCircle * 0.5f;
 
         Asteroid half = PoolParent.Get();
+        half.PoolParent = PoolParent;
         half.transform.rotation = transform.rotation;
         half.transform.position = position;
-        
         half.size = this.size * 0.5f;
         half.SetTrajectory(UnityEngine.Random.insideUnitCircle.normalized * asteroidSpeed);
     }

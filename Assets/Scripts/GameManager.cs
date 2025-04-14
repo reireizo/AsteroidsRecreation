@@ -39,6 +39,17 @@ public class GameManager : MonoBehaviour
     // OnEnable needs to:
     // > Subscribe to the player's HasDied action, to call PlayerDied.
     // > Subscribe to the asteroids' HasBeenDestroyed action, to call AsteroidDestroyed.
+
+    private readonly string highScoreKey = "hiScore";
+
+    private int asteroidMask;
+    private int playerMask;
+
+    private void Awake()
+    {
+        asteroidMask = LayerMask.NameToLayer("Asteroid");
+        playerMask = LayerMask.NameToLayer("Player");
+    }
     void OnEnable()
     {
         Player.HasDied += PlayerDied;
@@ -58,9 +69,9 @@ public class GameManager : MonoBehaviour
     // > Get hiScore from PlayerPrefs if it is present.
     void Start()
     {
-        if (PlayerPrefs.HasKey("hiScore"))
+        if (PlayerPrefs.HasKey(highScoreKey))
         {
-            hiScore = PlayerPrefs.GetInt("hiScore");
+            hiScore = PlayerPrefs.GetInt(highScoreKey);
         }
     }
 
@@ -115,6 +126,7 @@ public class GameManager : MonoBehaviour
     // > If not, respawn the player after respawnTime.
     public void PlayerDied()
     {
+        Physics2D.IgnoreLayerCollision(asteroidMask, playerMask);
         explosionEffect.transform.position = player.transform.position;
         explosionEffect.Play();
         lives--;
@@ -139,7 +151,6 @@ public class GameManager : MonoBehaviour
     {
         //Debug.Log("I died!");
         player.transform.position = Vector3.zero;
-        player.gameObject.layer = LayerMask.NameToLayer("Invincibility");
         player.gameObject.SetActive(true);
         Invoke(nameof(TurnOnCollisions), invincibleTime);
     }
@@ -148,7 +159,7 @@ public class GameManager : MonoBehaviour
     // > Put the player back on the normal Player layer.
     void TurnOnCollisions()
     {
-        player.gameObject.layer = LayerMask.NameToLayer("Player");
+        Physics2D.IgnoreLayerCollision(asteroidMask, playerMask, false);
     }
 
     // GameOver needs to:
@@ -187,14 +198,14 @@ public class GameManager : MonoBehaviour
     // > Update the final score UI with the current score.
     void UpdateFinalScoreUI()
     {
-        finalScoreUI.SetText("Final Score: " + score.ToString());
+        finalScoreUI.SetText($"Final Score: {score}");
     }
 
     // UpdateHiScoreUI needs to:
     // > Update the hi-score UI with the current hi-score.
     void UpdateHiScoreUI()
     {
-        hiScoreUI.SetText("Hi-Score: " + hiScore.ToString());
+        hiScoreUI.SetText($"Hi-Score: {score}");
     }
 
     // SaveHiScore needs to:
@@ -207,7 +218,7 @@ public class GameManager : MonoBehaviour
         if (score > hiScore)
         {
             hiScore = score;
-            PlayerPrefs.SetInt("hiScore", hiScore);
+            PlayerPrefs.SetInt(highScoreKey, hiScore);
             PlayerPrefs.Save();
         }
     }

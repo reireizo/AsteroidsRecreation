@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Bullet : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class Bullet : MonoBehaviour
     // Reference to the bullet's rigidbody. Grabbed on Awake.
     Rigidbody2D bulletRB;
 
+    public ObjectPool<Bullet> PoolParent;
+
     // Awake needs to:
     // > Get rigidbody for bullet.
     void Awake()
@@ -20,19 +23,32 @@ public class Bullet : MonoBehaviour
         bulletRB = GetComponent<Rigidbody2D>();   
     }
 
+    void Start()
+    {
+        StartCoroutine(ReleaseAfterTime());
+    }
+
     // Project needs to:
     // > Apply force to bullet with given direction.
     public void Project(Vector2 direction)
     {
         bulletRB.AddForce(direction * bulletSpeed);
-
-        Destroy(this.gameObject, bulletLifetime);
     }
 
     // OnCollisionEnter2D needs to:
     // Destroy bullet when it touches something.
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Destroy(this.gameObject);
+        PoolParent.Release(this);
+        if (collision.gameObject.TryGetComponent(out IShootable shootable))
+        {
+            shootable.OnShot();
+        }
+    }
+
+    private IEnumerator ReleaseAfterTime()
+    {
+        yield return new WaitForSeconds(bulletLifetime);
+        PoolParent.Release(this);
     }
 }
