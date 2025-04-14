@@ -50,6 +50,11 @@ public class Asteroid : MonoBehaviour, IShootable
     // > Set the asteroid's mass in the rigidbody based on the new size.
     void Start()
     {
+        SetUpAsteroid();
+    }
+
+    public void SetUpAsteroid()
+    {
         asteroidSpriteRenderer.sprite = sprites[UnityEngine.Random.Range(0, sprites.Length)];
 
         transform.eulerAngles = new Vector3(0.0f, 0.0f, UnityEngine.Random.value * 360.0f);
@@ -98,6 +103,7 @@ public class Asteroid : MonoBehaviour, IShootable
         half.transform.rotation = transform.rotation;
         half.transform.position = position;
         half.size = this.size * 0.5f;
+        half.SetUpAsteroid();
         half.SetTrajectory(UnityEngine.Random.insideUnitCircle.normalized * asteroidSpeed);
     }
 
